@@ -16,4 +16,20 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_select 'div#error_explanation'
     assert_select 'div.field_with_errors'
   end
+
+  test "valid signup information" do
+    get signup_path
+    assert_select 'form[action="/signup"]'
+    assert_difference 'User.count', 1 do
+      post signup_path, params: { user: {
+        name: "Example_user",
+        email: "example@mail.com",
+        password: "foobar",
+        password_confirmation: "foobar"
+        }}
+    end
+    follow_redirect!
+    assert_template 'users/show'
+    assert_not flash.empty?
+  end
 end
